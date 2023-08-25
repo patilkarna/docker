@@ -1,0 +1,37 @@
+FROM centos:7
+
+# Install required packages
+RUN yum install -y epel-release && \
+    yum install -y java-1.8.0-openjdk && \
+    yum install -y mariadb mariadb-server && \
+    yum clean all
+
+# Configure MySQL/MariaDB
+COPY my.cnf /etc/my.cnf
+
+# Download and install Apache Tomcat
+RUN curl -OL https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.92/bin/apache-tomcat-8.5.92.tar.gz && \
+    tar -xzvf apache-tomcat-8.5.92.tar.gz -C /opt/ && \
+    mv /opt/apache-tomcat-8.5.92 /opt/tomcat && \
+    rm apache-tomcat-8.5.92.tar.gz
+
+# Download MySQL Connector/J
+RUN curl -L https://s3-us-west-2.amazonaws.com/studentapi-cit/mysql-connector.jar -o /opt/tomcat/lib/mysql-connector.jar
+
+# Download and deploy the web application (WAR file)
+RUN curl -L https://s3-us-west-2.amazonaws.com/studentapi-cit/student.war -o /opt/tomcat/webapps/student.war
+
+# Copy context.xml configuration
+COPY context.xml /opt/tomcat/conf/context.xml
+
+# Copy SQL script
+COPY init-db.sql /opt/init-db.sql
+
+# Expose ports
+EXPOSE 8080
+EXPOSE 3306
+
+# Start services
+CMD service mariadb start && \
+    mysql -h testdb.cb2c1efmvwnb.eu-north-1.rds.amazonaws.com -u admin -padmin123 < /opt/init-db.sql && \
+    /opt/tomcat/bin/catalina.sh run
