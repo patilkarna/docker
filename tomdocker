@@ -1,0 +1,25 @@
+
+FROM tomcat:8.5
+
+# Install required packages using Debian package manager
+RUN apt-get update && \
+    apt-get install -y mariadb-client && \
+    apt-get clean
+
+# Download MySQL Connector/J
+RUN curl -L https://s3-us-west-2.amazonaws.com/studentapi-cit/mysql-connector.jar -o /usr/local/tomcat/lib/mysql-connector.jar
+
+# Download and deploy the web application (WAR file)
+RUN curl -L https://s3-us-west-2.amazonaws.com/studentapi-cit/student.war -o /usr/local/tomcat/webapps/student.war
+
+# Copy context.xml configuration
+COPY context.xml /usr/local/tomcat/conf/context.xml
+
+# Copy SQL script
+COPY init-db.sql /docker-entrypoint-initdb.d/init-db.sql
+
+# Expose port
+EXPOSE 8080
+
+# Start Tomcat
+CMD ["catalina.sh", "run"]
