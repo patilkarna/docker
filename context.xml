@@ -20,7 +20,7 @@
 <Resource name="jdbc/TestDB" auth="Container" type="javax.sql.DataSource"
            maxTotal="500" maxIdle="30" maxWaitMillis="1000"
            username="admin" password="admin123" driverClassName="com.mysql.jdbc.Driver"
-           url="jdbc:mysql://database-1.cnrdukjpki0r.eu-west-2.rds.amazonaws.com:3306/studentapp?useUnicode=yes&amp;characterEncodin/g=utf8"/>
+           url="jdbc:mysql://database-1.cvjtml1qfcah.us-east-1.rds.amazonaws.com:3306/studentapp?useUnicode=yes&amp;characterEncodin/g=utf8"/>
 
     <!-- Default set of monitored resources. If one of these changes, the    -->
     <!-- web application will be reloaded.                                   -->
